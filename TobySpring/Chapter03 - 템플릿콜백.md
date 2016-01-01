@@ -1,5 +1,7 @@
 # Chapter 03
 
+## DB 관련 자원 반납
+
 - DB연결을 담당하는 DataSource를 인터페이스로 분리하고, DataSource 구현체를 DI 받아오도록 개선되었지만, JDBC 리소스의 반납 관련 예외 처리 코드가 남아있다.
 
 ```java
@@ -46,6 +48,9 @@ public class UserDao {
     }    
 }
 ```
+
+## 자원 반납 코드의 중복
+
 - 위와 같이 DAO 메서드마다 자원 반납 코드가 계속 중복된다.
 - DAO 메서드를 다음과 같은 흐름이 있다.
     - dataSource에서 DB연결을 가져오고
@@ -54,6 +59,9 @@ public class UserDao {
     - 예외 발생 시 던지기
     - 모든 처리 후 자원 반납 처리
 - 여기에서 변하는 부분(전략)은 쿼리 생성, 나머지는 변하지 않는다(컨텍스트).
+
+### 전략 패턴을 통한 전략 분리
+
 - 전략을 분리하자!
 
 ```java
@@ -150,6 +158,8 @@ public void add(final User user) throws SQLException {
     }
 }
 ```
+
+### JdbcContext로 컨텍스트 분리
 
 - jdbcContextWithStatementStrategy()는 UserDao 뿐 아니라 다른 DAO에서도 사용될 수 있다.
 - 분리해서 별도의 클래스로 만들어보자.
@@ -252,6 +262,30 @@ public class UserDao {
     public void deleteAll() throws SQLException {
         // 컨텍스트에 단순히 쿼리 문자열만 넘겨주면 된다!!
         this.context.executeSql("delete from users");
+    }
+}
+```
+
+![](http://i.imgur.com/EgUCT0U.png)
+
+
+## Spring의 JdbcTemplate
+
+- 위에서 JdbcContext가 하는 역할 담당
+- update(), queryForInt(), queryForObject(), query() 등 메서드 지원
+- 최근에는 JdbcTemplate를 확장한 NamedParameterJdbcTemplate 주로 사용
+
+
+public class UserDao {
+    JdbcTemplate jdbcTemplate;
+
+    public void setJdbcTempate(JdbcTemplate template) {
+        this.template = template;
+    }
+
+    public void deleteAll() throws SQLException {
+        // 컨텍스트에 단순히 쿼리 문자열만 넘겨주면 된다!!
+        this.template.update("delete from users");
     }
 }
 ```
