@@ -53,4 +53,4 @@
 - Dao도 JDBC, JTA, Hibernate 등에 의존하지 않도록 인터페이스 추출
 - UserDao 인터페이스에 UserDaoJdbc, UserDaoJta, UserDaoHibernate등을 필요에 따라 할당하여 사용
 
-
+![](http://i.imgur.com/VbXMH6v.png)
