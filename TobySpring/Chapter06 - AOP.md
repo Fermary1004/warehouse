@@ -1,6 +1,6 @@
 # Chapter 06 - AOP
 
-## 프록시와 데코레이터
+## 프록시
 
 ### 프록시
 
@@ -44,6 +44,47 @@
     - 부가 기능이 추가되지 않는 메서드라도 단순히 다킷의 메서드를 호출하도록 구현
 - 프록시는 메서드 수준에서 관리 포인트를 확보
     - 동일한 부가 기능이 여러 메서드에 추가되어야 한다면 중복 코드 발생 우려 
+
+#### JDK에서 제공하는 Dynamic Proxy
+
+```java
+UserService userTx = (UserService)Proxy.newProxyInstance(
+    getClass().getClassLoader(), // 클래스로더
+    new Class[] {UserService.class}, // 구현할 인터페이스
+    new UserServiceTx(new UserServiceImpl()) // 타깃과 부가 기능 프록시 
+);
+```
+
+#### JDK의 Dynamic Proxy의 단점
+
+- Proxy.newProxyInstance()로 생성되는 dynamic proxy는 일반적인 스프링 빈으로 등록 불가
+    - FactoryBean 인터페이스를 구현한 클래스에서 getObject()의 구현부에서 Proxy.newProxyInstance()로 dynamic proxy를 만들면 빈으로 등록 가능
+- 프록시를 이용해서 부가기능을 추가하는 것은 메서드 단위로 일어나는 일
+    - 공통적인 부가 기능을 한 번에 여러 클래스에 추가 불가
+- 프록시는 타깃을 프로퍼티로 가지고 있으므로
+    - 트랜잭션 설정이라는 동일한 기능을 추가하더라도 타깃이 달라지면 별도의 프록시를 생성해야 한다.
+    - 새로운 부가기능을 추가할 떄마다 프록시와 프록시 팩토리 빈을 함께 추가해야 한다.
+
+### 스프링의 Dynamic Proxy
+
+#### ProxyFactoryBean
+
+- 프록시를 생성해서 Bean 객체로 등록시켜주는 팩토리 빈
+- 
+
+#### MethodInterceptor
+- InvocationHandler.invoke()는 타깃 객체에 대한 정보를 제공하지 않아서 타깃 객체 마다 프록시를 만들어야 했지만,
+- MethodInterceptor.invoke()는 ProxyFactoryBean으로부터 타깃 객체에 대한 정보도 함께 제공받으므로, 여러 프록시에서 재사용될 수 있다.
+
+#### Advice
+
+- 부가 기능을 제공하는 객체
+
+#### PointCut
+
+- 부가 기능을 추가할 메서드를 선정하는 알고리듬을 담은 객체+
+
+
 
 
 
