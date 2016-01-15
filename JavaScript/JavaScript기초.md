@@ -312,6 +312,21 @@ JavaScript에는 두 종류의 Chain이 존재한다.
 스코프체인을 찾다 글로벌 vo에서도 못 찾으면, 기명 함수 이름을 저장해놓은 특수 객체를 뒤지게 되어 있는데, 이 특수 객체를 뒤지는 것 부터는 스코프체인이 아니라 프로토타입 체인을 탄다.
 즉, 기명 함수 이름 저장 특수 객체를 뒤지다 없으면 그 객체의 [[Prototype]]인 Object.prototype을 뒤지게 된다는..
 
+```javascript
+window.a = 3
+Window.prototype.a = 2;
+Object.prototype.a = 1;
+var test = function a() {
+　　console.log(a);
+};
+test(); // function a가 출력된다.
+
+// function a()를 function b()로 바꿔서 실행하면 3이 출력
+// window.a = 3 을 지우고 실행하면 2가 출력
+// Window.prototype.a = 2를 지우고 실행하면 1이 출력
+```
+
+
 참고 : http://dmitrysoshnikov.com/ecmascript/chapter-4-scope-chain/#two-dimensional-scope-chain-lookup
 
 - Variable Object(변수 객체)는 ECMA 5에서 Variable Environment라는 걸로 바뀌었다.
