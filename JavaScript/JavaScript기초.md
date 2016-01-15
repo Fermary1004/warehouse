@@ -160,12 +160,12 @@ func
     - Function.prototype이 가리키는 객체는 모든 함수의 부모 역할을 하는 객체라서, 임의의 함수 A에 대해
 
         `A.__proto__ === Function.prototype`이 성립한다.
-        - Function.prototype도 함수이므로 `Function.prototype.__proto__ === Function.prototype`이 성립해야하고, 이는 Function.prototype이 자기 자신의 부모이자 자식이 된다는 이상한 논리를 형성하지만,
+        - Function.prototype이 가리키는 객체도 함수이므로 `Function.prototype.__proto__ === Function.prototype`이 성립해야하고, 이는 Function.prototype이 가리키는 객체 자신의 부모이자 자식이 된다는 이상한 논리를 형성하지만,
             - `Function.prototype.__proto__ === Object.prototype`라고 스펙에 명시하는 것으로 해결.
     - 이 밖에도 Function.prototype이 가리키는 객체에 대해 스펙에서 명시한 것은
-        - Function.prototype가 함수이므로 Function.prototype()와 같이 실행할 수도 있는데, 이렇게 실행되면 무조건 undefined를 반환
-        - Function.prototype.length는 0
-        - Function.prototype.name은 빈문자열
+        - Function.prototype이 가리키는 객체가 함수이므로 Function.prototype()와 같이 실행할 수도 있는데, 이렇게 실행되면 무조건 undefined를 반환
+        - Function.prototype.length의 값은 0
+        - Function.prototype.name의 값은 빈문자열
 
 - var objectFromA = new A(); 와 같이 생성자 방식으로 objectFromA라는 객체를 생성하면 objectFromA.\__proto\__는 A.prototype을 가리킨다. 
 
@@ -267,7 +267,7 @@ primitive 형이면 값을 복사하고, 참조면 주소값을 저장한다.
 
 스코프 체인은 변수 객체를 원소로 가지고 있는 링크드 리스트다.
 
-함수 A가 호출되어 실행 컨텍스트가 생기면, 함수 A의 정의 시에 생성된 스코프 체인이 가리키고 있던 모든 변수 객체의 참조를 새로운 링크드 리스트 B에 복사하고, A의 호출에 의해 생성된 실행 컨텍스트를 B에 추가하고 A의 실행 컨텍스트에 있는 스코프 체인은 B를 가리키게 된다.
+함수 A가 호출되어 함수 A의 실행 컨텍스트가 생기면, 함수 A의 정의 당시의 실행 컨텍스트(함수 A의 실행 컨텍스트가 아닌) 내에 있는 스코프 체인이 가리키고 있던 모든 변수 객체의 참조를 새로운 링크드 리스트 B에 복사하고, A의 호출에 의해 생성된 실행 컨텍스트 내의 변수 객체의 참조를 B에 추가하고 A의 실행 컨텍스트에 있는 스코프 체인은 B를 가리키게 된다.
 
 A에서는 링크드 리스트 B에 담긴 모든 변수 객체에 담겨있는 모든 속성(변수와 함수)에 접근할 수 있다.  
 
@@ -278,9 +278,9 @@ A에서는 링크드 리스트 B에 담긴 모든 변수 객체에 담겨있는 
 
 ## this 바인딩
 
-this 바인딩은 쩜뉴콜라
+this 바인딩은 뉴쩜콜라
 
-다른 함수 A의 파라미터로 전달되는 함수 B에 기술되어 있는 this는 기본적으로는 중첩 함수로서 전역 객체가 할당되지만 대부분 A에서 call, apply를 통해 B의 this에 어떤 값을 바인딩하므로, 소스를 보거나 직접 테스트 해보지 않는한 알 수 없다.
+다른 함수 A의 파라미터로 전달되는 함수 B에 기술되어 있는 this는 기본적으로는 중첩 함수로서 전역 객체가 할당되지만 대부분 A에서 call(), apply(), bind()를 통해 B의 this에 어떤 값을 바인딩하므로, 소스를 보거나 직접 테스트 해보지 않는한 알 수 없다.
 
 # HTML - JavaScript
 
