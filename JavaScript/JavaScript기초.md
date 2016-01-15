@@ -308,7 +308,15 @@ JavaScript에는 두 종류의 Chain이 존재한다.
 
 어떤 함수 A에서 사용되는 a라는 변수가 A에서 선언되지 않았으면, A를 감싸고 있는 함수 AA에서 a를 찾고, 없으면 AA를 감싸고 있는 AAA함수에서 a를 찾고..를 반복해서 전역 객체까지 찾는다. {{{왜 전역 객체까지 찾지???}}} 전역 객체에 선언된 변수는 전역 객체의 속성이 되며, 전역 객체는 Object.prototype을 상속받으므로 여기서부터는 프로토타입 체인이 적용되어 Object.prototype 까지 찾는다.
 
+{{맹 왈}}
+스코프체인을 찾다 글로벌 vo에서도 못 찾으면, 기명 함수 이름을 저장해놓은 특수 객체를 뒤지게 되어 있는데, 이 특수 객체를 뒤지는 것 부터는 스코프체인이 아니라 프로토타입 체인을 탄다.
+즉, 기명 함수 이름 저장 특수 객체를 뒤지다 없으면 그 객체의 [[Prototype]]인 Object.prototype을 뒤지게 된다는..
+
 참고 : http://dmitrysoshnikov.com/ecmascript/chapter-4-scope-chain/#two-dimensional-scope-chain-lookup
+
+- Variable Object(변수 객체)는 ECMA 5에서 Variable Environment라는 걸로 바뀌었다.
+참고 : http://dmitrysoshnikov.com/ecmascript/es5-chapter-3-2-lexical-environments-ecmascript-implementation/#variable-environment
+
 
 전역 객체에 선언된 변수는 전역 객체의 속성이 된다.
 
