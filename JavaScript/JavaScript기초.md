@@ -313,7 +313,7 @@ JavaScript에는 두 종류의 Chain이 존재한다.
 즉, 기명 함수 이름 저장 특수 객체를 뒤지다 없으면 그 객체의 [[Prototype]]인 Object.prototype을 뒤지게 된다는..
 
 ```javascript
-window.a = 3
+window.a = 3;
 Window.prototype.a = 2;
 Object.prototype.a = 1;
 var test = function a() {
