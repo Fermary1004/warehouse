@@ -310,7 +310,7 @@ JavaScript에는 두 종류의 Chain이 존재한다.
 
 {{맹 왈}}
 스코프체인을 찾다 글로벌 vo에서도 못 찾으면, 기명 함수 이름을 저장해놓은 특수 객체를 뒤지게 되어 있는데, 이 특수 객체를 뒤지는 것 부터는 스코프체인이 아니라 프로토타입 체인을 탄다.
-즉, 기명 함수 이름 저장 특수 객체를 뒤지다 없으면 그 객체의 [[Prototype]]인 Object.prototype을 뒤지게 된다는..
+즉, 기명 함수 이름 저장 특수 객체를 뒤지다 없으면 그 객체의 [[Prototype]]인 Object.prototype을 뒤지게 된다는.. => 아니다!!
 
 ```javascript
 window.a = 3;
@@ -339,6 +339,12 @@ test(); // function a가 출력된다.
 var x = 3;
 console.log(x === this.x); // 전역 공간에서의 this는 전역 객체를 가리킨다.
 ```
+
+# Lexical Environment
+
+별도로 정리 예정
+
+
 
 # HTML - JavaScript
 
