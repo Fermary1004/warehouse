@@ -74,7 +74,7 @@ public class UserDao {
     public void crud1() {
         // Connection 을 얻어오는데 구체적인 JDBCDriver 정보에 의존하지 않고
         // 누군가가 setDataSource()로 주입해준 Connection 인터페이스에만 의존
-        Connection c = dataSource.getConnection(); 
+        Connection c = getConnection(); 
 
         PreparedStatement ps = c.preparedStatement("SQL with ?, ?, ?, ...");
         ps.setSting(1, user.getId());
@@ -114,9 +114,9 @@ public class UserDaoTest {
 ```
 ![](http://i.imgur.com/LYHnFmE.png)
 
-- DaoFactory가 필요한 객체 생성(new ADataSource(), new UserDao()) 및 관계 설정(ADataSource를 UserDao에 주입)
+- DaoFactory가 필요한 객체 생성(new ADataSource(), new UserDao()) 및 **관계 설정**(ADataSource를 UserDao에 주입)
 
-이렇게 보니 Factory가 중요하다. Factory를 제대로 만들어보자.
+객체 지향은 결국 협업이고, 협업의 바탕은 관계 설정인데, 그 **관계 설정을 Factory가 담당하는 것이다. 이렇게 보니 Factory가 중요하다.** Factory를 제대로 만들어보자.
 
 ## ApplicationContext
 
