@@ -13,12 +13,16 @@ public class UserDao {
         this.dataSource = dataSource;
     }
 
+    private Connection getConnection() {
+        dataSource.getConnection();
+    }
+
     public deleteAll() throws SQLException {
         Connection c = null;
         PreparedStatement ps = null;
 
         try {
-            c = dataSource.getConnection();
+            c = getConnection();
             ps = c.prepareStatement("delete from users");
             ps.executeUpdate();
         } catch(SQLException e) {
@@ -35,7 +39,7 @@ public class UserDao {
         ResultSet rs = null;
 
         try {
-            c = dataSource.getConnection();
+            c = getConnection();
             ps = c.prepareStatement("select from users");
             rs = ps.executeQuery();
         } catch(SQLException e) {
@@ -73,6 +77,10 @@ public class UserDao {
         this.dataSource = dataSource;
     }
 
+    private Connection getConnection() {
+        dataSource.getConnection();
+    }
+
     public deleteAll() throws SQLException {
         // 비즈 로직을 담고 있는 전략을 생성해서 컨텍스트에 주입해주고
         // 로직의 실행 및 뒤처리는 jdbcContextWithStatementStrategy에 위임
@@ -95,7 +103,7 @@ public class UserDao {
         PreparedStatement ps = null;
 
         try {
-            c = dataSource.getConnection();
+            c = getConnection();
             // 주입 받은 비즈 로직으로 쿼리 생성
             ps = strategy.makeStatement(c);
             ps.executeUpdate();
@@ -172,12 +180,16 @@ public class JdbcContext {
         this.dataSource = dataSource;
     }
 
+    private Connection getConnection() {
+        dataSource.getConnection();
+    }
+
     public void processStatement(StatementStrategy strategy) throws SQLException {
         Connection c = null;
         PreparedStatement ps = null;
 
         try {
-            c = this.dataSource.getConnection();
+            c = getConnection();
             // 주입 받은 비즈 로직으로 쿼리 생성
             ps = strategy.makeStatement(c);
             ps.executeUpdate();
@@ -222,12 +234,28 @@ public class JdbcContext {
         this.dataSource = dataSource;
     }
 
-    public void processStatement(StatementStrategy strategy) throws SQLException {
+    private Connection getConnection() {
+        dataSource.getConnection();
+    }
+
+    public void executeSql(final String query) {     
+        // 쿼리 문자열만 받아서 익명 클래스 생성 후
+        // 템플릿 메서드 호출       
+        processStatement(
+            new StatementStrategy(
+                public PreparedStatement makeStatement(Connection c) throws SQLException {
+                    return c.prepareStatement(query);
+                }
+            )
+        )
+    }
+
+    private void processStatement(StatementStrategy strategy) throws SQLException {
         Connection c = null;
         PreparedStatement ps = null;
 
         try {
-            c = this.dataSource.getConnection();
+            c = getConnection();
             // 주입 받은 비즈 로직으로 쿼리 생성
             ps = strategy.makeStatement(c);
             ps.executeUpdate();
@@ -237,18 +265,6 @@ public class JdbcContext {
             if (ps != null) { try { ps.close(); } catch(SQLException e) {} }
             if (c != null) { try { c.close(); } catch(SQLException e) {} }
         }  
-    }
-
-    public void executeSql(final String query) {     
-        // 쿼리 문자열만 받아서 익명 클래스 생성 후
-        // 템플릿 메서드 호출       
-        processStatement(
-            new StrategyStatement(
-                public PreparedStatement makeStatement(Connection c) throws SQLException {
-                    return c.prepareStatement(query);
-                }
-            )
-        )
     }
 }
 
