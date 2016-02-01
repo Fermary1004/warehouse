@@ -102,6 +102,20 @@ A Bernoulli system outputs a  1 with probability  p and a  0 with probability  1
 
 ## Epsilon-Greedy Algorithm
 
-- epsilon의 확률로 exploration 하고, 1-epsilon의 확률로 exploitation 한다.
+- epsilon의 비율로 exploration 하고, 1-epsilon의 비율로 exploitation 한다.
     - exploration하게 되면 반은 역사적인 best arm으로 exploration하고, 나머지 반은 worst arm으로 exploration 한다.
+
+### 평균 구하는 새로운 방법
+
+- 기존 : sum(n) / n
+- 살짝 변형 : n - 1 개 까지의 평균 a을 알고, n 번째의 값 v를 알 때 전체 n의 평균 Result
+
+    ```    
+    Result = sum(n) / n
+    Result = sum(n - 1) / n + v / n
+    Result = sum(n - 1) / (n - 1)   *   (n - 1) / n   +   v / n
+    a = sum(n - 1) / n -1
+
+    Result = a * (n - 1) / n   +   v / n
+    ```
 
