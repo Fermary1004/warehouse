@@ -92,3 +92,16 @@ An algorithm is an active learning algorithm if it can decide which pieces of da
 A Bernoulli system outputs a  1 with probability  p and a  0 with probability  1 – p
 
 가능성이 p이면 1을 출력 가능성이 1-p 이면 0을 출력하는 시스템 
+
+
+## A/B 테스트의 단점
+
+- Exploration 단계에서 Exploitation 단계로 부드럽게 전환되지 않고, A와 B 중 A가 더 나은 안이라고 결론지어지면 B를 바로 폐기하는 방식으로 단절되어 진행된다.
+
+- B가 불리하다는 점을 확인하기 위해 소요된 자원은 매몰된다.
+
+## Epsilon-Greedy Algorithm
+
+- epsilon의 확률로 exploration 하고, 1-epsilon의 확률로 exploitation 한다.
+    - exploration하게 되면 반은 역사적인 best arm으로 exploration하고, 나머지 반은 worst arm으로 exploration 한다.
+
