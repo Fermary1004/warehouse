@@ -105,6 +105,9 @@ A Bernoulli system outputs a  1 with probability  p and a  0 with probability  1
 - epsilon의 비율로 exploration 하고, 1-epsilon의 비율로 exploitation 한다.
     - exploration하게 되면 반은 역사적인 best arm으로 exploration하고, 나머지 반은 worst arm으로 exploration 한다.
 
+- epsilon이 1.0이면 exploration만 하므로 사실 상 A/B 테스트와 같아진다.
+- epsilon이 0.0이면 exploitation만 하므로 사실 상 현재 안 유지와 같아진다.
+
 ### 평균 구하는 새로운 방법
 
 - 기존 : sum(n) / n
@@ -119,3 +122,9 @@ A Bernoulli system outputs a  1 with probability  p and a  0 with probability  1
     Result = a * (n - 1) / n   +   v / n
     ```
 
+### epsilon-greedy 알고리듬의 단점
+
+- n 가지 안이 존재한다면, 언제나 epsilon * (n - 1)/n 만큼은 좋지 않은 안임에도 불구하고 계속 exploration을 하는 낭비 발생
+- 두 가지 안이 존재하고 보상률이 각각 10%, 13% 인 시나리오 A와 10%, 99% 인 시나리오 B가 있을 때, A와 B는 보상률의 차이가 크다는 특징이 있음에도 불구하고 epsilon-greedy 알고리듬 상에서는 똑같은 로직이 적용됨
+    - 즉, 시나리오 B에서는 각 arm 별 보상률의 차이가 크므로 10%인 arm에 대해 exploration을 많이 할 필요가 없다. 
+    - 하지만 시나리오 A에서는 각 arm 별 보상률의 차이가 크지 않으므로 어느 안이 좋은 안인지 확실히 알기 위해 더 많은 exploration을 하는 것이 타당하다.
