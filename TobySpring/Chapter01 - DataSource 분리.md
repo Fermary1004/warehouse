@@ -73,7 +73,7 @@ public class UserDao {
 
     public void crud1() {
         // Connection 을 얻어오는데 구체적인 JDBCDriver 정보에 의존하지 않고
-        // 누군가가 setDataSource()로 주입해준 Connection 인터페이스에만 의존
+        // 누군가가 setDataSource()로 주입해준 DataSource에만 의존
         Connection c = getConnection(); 
 
         PreparedStatement ps = c.preparedStatement("SQL with ?, ?, ?, ...");
@@ -93,14 +93,16 @@ public class UserDao {
 - DataSource라는 인터페이스를 context로 가지고 dataSource를 UserDao의 소스 코드 변경 없이 변경 가능
 - DataSource에 주입되는 DataSource 인터페이스의 구현체는 외부에서 주입받는다.
 
-**누가 주입해주나?**
+**DataSource를 누가 주입해주나?**
 
 ## Factory Pattern
 
 ```java
 public class DaoFactory {
     public UserDao getUserDao() {
-        return new UserDao(new ADataSource()); 
+        UserDao userDao = new UserDao();
+        userDao.setDataSource(new ADataSource());
+        return userDao; 
     }
 }
 
