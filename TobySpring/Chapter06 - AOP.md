@@ -8,7 +8,7 @@
  
 이 책을 읽고 아낄 수 있는 많은 시간, 높아질 몸값을 생각하면 충분히 투자할 가치가 있는 책입니다. 
 
-[http://www.acornpub.co.kr/book/toby-spring3-1-set](http://www.acornpub.co.kr/book/toby-spring3-1-set)
+<a href='http://www.acornpub.co.kr/book/toby-spring3-1-set' target='_blank'>http://www.acornpub.co.kr/book/toby-spring3-1-set</a>
 
 ## 프록시
 
