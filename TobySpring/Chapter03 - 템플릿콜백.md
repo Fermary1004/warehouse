@@ -103,7 +103,7 @@
             // 비즈 로직을 담고 있는 전략을 생성해서 컨텍스트에 주입해주고
             // 로직의 실행 및 뒤처리는 jdbcContextWithStatementStrategy에 위임
             // 자원 반납 등의 지저분한 코드를 jdbcContextWithStatementStrategy로 모아서 중복 제거
-            jdbcContextWithStatementStrategy(new AddStatement());   
+            jdbcContextWithStatementStrategy(new AddStatement(user));   
         }
     
         private void jdbcContextWithStatementStrategy(StatementStrategy strategy) throws SQLException {
@@ -137,11 +137,17 @@
     }
     
     public class AddStatement implements StatementStrategy {
+
+        private User user;
+
+        public AddStatement(User user) {
+            this.user = user;
+        }
+
         // 실제 비즈 로직을 담는다.
         public PreparedStatement makeStatement(Connection c) throws SQLException {
             PreparedStatement ps = 
                         c.prepareStatement("inser into users(id, name, password) values (?, ?, ?)");
-            // 내부 클래스를 쓰면 outer의 변수인 user에 접근 가능
             ps.setString(1, user.getId());
             ps.setString(2, user.getName());
             ps.setString(3, user.getPassword());
@@ -229,16 +235,16 @@
     }
     
     public class UserDao {
-        JdbcContext context;
+        JdbcContext jdbcContext;
     
-        public void setJdbcContext(JdbcContext context) {
-            this.context = context;
+        public void setJdbcContext(JdbcContext jdbcContext) {
+            this.jdbcContext = jdbcContext;
         }
     
         public void deleteAll() throws SQLException {
             // 컨텍스트에 있는 템플릿 메서드에
             // 콜백 오브젝트 주입
-            this.context.processStatement(
+            this.jdbcContext.processStatement(
                 new StatementStrategy(
                     public PreparedStatement makeStatement(Connection c)
                     throws SQLException {
@@ -247,10 +253,30 @@
                 )
             );
         }
+
+        public void add(final User user) throws SQLException {
+            // 컨텍스트에 있는 템플릿 메서드에
+            // 콜백 오브젝트 주입
+            this.jdbcContext.processStatement(
+                new StatementStrategy(
+                    public PreparedStatement makeStatement(Connection c) throws SQLException {
+                        PreparedStatement ps = 
+                            c.prepareStatement("inser into users(id, name, password) values (?, ?, ?)");
+                        // 내부 클래스를 쓰면 outer의 변수인 user에 접근 가능
+                        ps.setString(1, user.getId());
+                        ps.setString(2, user.getName());
+                        ps.setString(3, user.getPassword());
+                        return ps;
+                    }
+                }
+            }
+        }
     }
     ```
-- 중복은 아직도 남아있다. 바로, 익명 클래스 생성 부분이다.
-- 메서드로 빼서 최적화하자.
+- 이제 JdbcContext를 여러 DAO에서도 사용할 수 있게 되었다.
+- 하지만 중복은 아직도 남아있다. 바로, UserDao에서 JdbcContext를 생성할 때 사용하는 익명 클래스 생성 부분이다.
+- 익명 클래스 생성 부분을 별도의 메서드인 `executeSql()`로 분리한다. 쿼리 뿐아니라 파라미터도 사용할 수 있도록 Java5부터 도입된 가변인자를 활용하자.
+- `executeSql()` 메서드는 UserDao 뿐아니라 여러 DAO에서 사용될 수 있으므로 아예 JdbcContext 로 이동시키고 최적화하자.
 
     ```java
     public class JdbcContext {
@@ -264,16 +290,21 @@
             dataSource.getConnection();
         }
     
-        public void executeSql(final String query) {     
-            // 쿼리 문자열만 받아서 익명 클래스 생성 후
-            // 템플릿 메서드 호출       
+        public void executeSql(final String query, final Object... params) {     
+            // 쿼리 문자열과 파라미터를 받아서 익명 클래스 생성 후
+            // 템플릿 메서드 호출   
             processStatement(
                 new StatementStrategy(
                     public PreparedStatement makeStatement(Connection c) throws SQLException {
-                        return c.prepareStatement(query);
+                        ps = c.prepareStatement(query);
+                        for (int i = 0, len = params.length ; i < len ; i++) {
+                            String param = params[i];
+                            ps.setObject(i+1, param);
+                        }
+                        return ps;
                     }
                 )
-            )
+            )    
         }
     
         private void processStatement(StatementStrategy strategy) throws SQLException {
@@ -305,8 +336,18 @@
             // 컨텍스트에 단순히 쿼리 문자열만 넘겨주면 된다!!
             this.context.executeSql("delete from users");
         }
+
+        public void add(final User user) throws SQLException {
+            // 컨텍스트에 단순히 쿼리 문자열과 파라미터만 넘겨주면 된다!!
+            this.context.executeSql("inser into users(id, name, password) values (?, ?, ?)",
+                                    user.getId(), user.getName(), user.getPassword());
+        }
     }
     ```
+- 이제 Host코드라고 할 수 있는 DAO에는 정말로 순수하게 비즈 로직을 담고 있는 쿼리 문자열만 남게 되었다.
+- Persistence를 위한 DB 연결, 쿼리 실행, 예외 처리, 자원 반납은 모두 프레임워크에 해당하는 JdbcContext에서 담당하게 되었다.
+- 여러 객체의 협력을 통해 Host코드를 아주 우아하게 단순화 할 수 있었지만, 전체 클래스 다이어그램은 조금 복잡해 보이기도 한다. 
+- 하지만 핵심만 보면 복잡하지 않다. UserDao에서는 쿼리와 파라미터만 JdbcContext에 전달하면 Persistence 처리에 필요한 모든 일은 JdbcContext가 담당하게 되었다.
 
 ![](http://i.imgur.com/EgUCT0U.png)
 
@@ -328,6 +369,12 @@
         public void deleteAll() throws SQLException {
             // 컨텍스트에 단순히 쿼리 문자열만 넘겨주면 된다!!
             this.template.update("delete from users");
+        }
+
+        public void add(final User user) throws SQLException {
+            // 컨텍스트에 단순히 쿼리 문자열과 파라미터만 넘겨주면 된다!!
+            this.template.update("inser into users(id, name, password) values (?, ?, ?)",
+                                 user.getId(), user.getName(), user.getPassword());
         }
     }
     ```
