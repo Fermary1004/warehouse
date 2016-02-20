@@ -52,9 +52,10 @@
 #### 프록시의 단점
 
 - 프록시는 target이 구현하는 인터페이스의 특정 메서드가 아니라 모든 메서드를 구현해야함
-    - 부가 기능이 추가되지 않는 메서드라도 단순히 target의 메서드를 호출하도록 구현
+    - 부가 기능이 추가되지 않는 메서드라도 단순히 target의 메서드를 호출하도록 구현해야함
 - 프록시는 메서드 수준에서 관리 포인트를 확보
-    - 동일한 부가 기능이 여러 메서드에 추가되어야 한다면 중복 코드 발생 우려 
+    - 동일한 부가 기능을 여러 메서드에 추가해야 한다면, 여러 메서드 부가 기능 코드를 모두 추가해야 하므로 중복 발생 
+- 이런 단점을 해결해주는 것이 JDK의 Dynamic Proxy
 
 #### JDK에서 제공하는 Dynamic Proxy
 
@@ -64,6 +65,68 @@ UserService userTx = (UserService)Proxy.newProxyInstance(
     new Class[] {UserService.class}, // 구현할 인터페이스
     new UserServiceTx(new UserServiceImpl()) // target(UserServiceImpl)과 부가 기능 프록시(UserServiceTx) 
 );
+```
+
+- 프록시는 `InvocationHandler` 인터페이스를 구현해야함
+
+#### JDK의 Dynamic Proxy 학습 테스트
+
+```java
+import org.junit.Test;
+
+import java.lang.reflect.InvocationHandler;
+import java.lang.reflect.Method;
+import java.lang.reflect.Proxy;
+
+import static org.hamcrest.CoreMatchers.is;
+import static org.junit.Assert.assertThat;
+
+public class DynamicProxyTest {    
+
+    @Test
+    public void dynamicProxy() throws Exception {
+        Target dynamicProxy =
+                (Target)Proxy.newProxyInstance(
+                        getClass().getClassLoader(),
+                        new Class[] {Target.class},
+                        new AsteriskProxy(new Target() {
+                            @Override
+                            public String sayHello(String name) {
+                                return "Hello " + name;
+                            }
+                        })
+                );
+        assertThat(dynamicProxy.sayHello("Homo Efficio"), is("***Hello Homo Efficio***"));
+    }
+}
+
+// target 객체의 interface
+interface Target {
+    String sayHello(String name);
+}
+
+// Dynamic Proxy가 되려면 java.lang.InvocationHandler를 구현해야함
+class AsteriskProxy implements InvocationHandler {
+
+    private Target target;
+
+    public AsteriskProxy(Target target) {
+        this.target = target;
+    }
+
+    @Override
+    public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
+        // 실제 target 객체의 메서드를 실행
+        // target 객체의 모든 메서드가 이 invoke()에 의해 호출
+        String realResult = (String)method.invoke(target, args);
+
+        // 부가 기능 추가
+        // target 객체의 모든 메서드가 이 invoke()에 의해 호출되므로
+        // 부가 기능은 여기에만 추가하면 target 객체의 모든 메서드에 적용
+        String decoratedResult = "***" + realResult + "***";
+
+        return decoratedResult;
+    
 ```
 
 #### JDK의 Dynamic Proxy의 단점
@@ -81,7 +144,6 @@ UserService userTx = (UserService)Proxy.newProxyInstance(
 #### ProxyFactoryBean
 
 - 프록시를 생성해서 Bean 객체로 등록시켜주는 팩토리 빈
-- 
 
 #### MethodInterceptor
 - InvocationHandler.invoke()는 target 객체에 대한 정보를 제공하지 않아서 target 객체 마다 프록시를 만들어야 했지만,
