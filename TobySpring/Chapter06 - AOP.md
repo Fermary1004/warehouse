@@ -10,18 +10,18 @@
 
 <a href='http://www.acornpub.co.kr/book/toby-spring3-1-set' target='_blank'>http://www.acornpub.co.kr/book/toby-spring3-1-set</a>
 
-## 프록시
+## Proxy
 
-### 프록시
+### 프록시(Proxy)
 
-- 프록시는 자신이 클라이언트가 사용하려는 객체인 타깃 객체처럼 위장(타깃과 같은 인터페이스 구현)해서 클라이언트의 요청을 타깃보다 먼저 받는다.
-- 프록시는 이처럼 위장을 통해 타깃의 앞단에서 클라이언트의 요청을 가로채서 부가 기능을 추가하거나 접근 방식을 제어하는 객체를 통칭한다.
+- 프록시는 클라이언트가 사용하려는 객체인 target 객체처럼 자신을 위장(target과 같은 인터페이스 구현)해서 클라이언트의 요청을 target 객체보다 먼저 받는다.
+- 프록시는 이처럼 위장을 통해 target의 앞단에서 클라이언트의 요청을 가로채서 부가 기능을 추가하거나 접근 방식을 제어하는 객체를 통칭한다.
 
-### 데코레이터 패턴
+### 데코레이터(Decorator) 패턴
 
-- 데코레이터는 프록시 중에서 타깃에 부가 기능을 런타임에 동적으로 추가하는 역할을 담당하는 객체
-- 데코레이터 패턴은 타깃 코드를 건드리지 않고, 클라이언트의 호출하는 방식도 변경하지 않으면서 동적으로 새로운 기능을 추가할 때 유용 
-- 데코레이터 패턴에서는 프록시가 하나로 제한되지 않는다.
+- 데코레이터는 프록시 중에서 런타임에 동적으로 target에 부가 기능을 추가하는 역할을 담당하는 객체
+- 데코레이터 패턴은 target 코드를 건드리지 않고, 클라이언트의 호출하는 방식도 변경하지 않으면서 동적으로 새로운 기능을 추가할 때 유용 
+- 데코레이터 패턴에서는 프록시가 하나로 제한되지 않으며, 여러 개의 데코레이터가 사용될 수 있다.
 - 대표적인 예 : BufferedReader
     
     ```java
@@ -30,28 +30,29 @@
     } catch (IOException e) {
         ...
     } finally {
-        // 프록시의 br.close()를 호출하면 내부적으로 타깃의 FileReader의 close()를 호출
+        // 프록시의 br.close()를 호출하면 내부적으로 target의 FileReader의 close()를 호출
+        // 프록시를 직접 구현한다면 이처럼 target의 자원 반환 코드가 프록시에 구현되어 있어야 안전하다.
         if (br != null) try { br.close(); } catch (IOException e) {}
     } 
     ```
 
-### 프록시 패턴
+### 프록시(Proxy) 패턴
 
-- 새로운 기능은 추가하지 않지만, 타깃에 대한 접근 방식을 변경할 수 있게 해주는 프록시
-- 타깃의 지연 바인딩에 활용
+- 새로운 기능은 추가하지 않지만, target에 대한 접근 방식을 변경할 수 있게 해주는 프록시
+- target의 지연 바인딩에 활용
 - 대표적인 예 : Collections.unmodifiableCollection()이 반환하는 객체
     
     ```java
     Collection<List<User>> immutableList = Collections.unmodifiableCollection(list);
-    immutableList.add(user); // 추가하면 UnsupportedOperationException 발생
+    immutableList.add(user); // immutable인 Collection에 add로 원소를 추가하면 UnsupportedOperationException 발생
     ```
 
 ### Dynamic Proxy
 
 #### 프록시의 단점
 
-- 프록시는 타깃이 구현하는 인터페이스의 특정 메서드가 아니라 모든 메서드를 구현해야함
-    - 부가 기능이 추가되지 않는 메서드라도 단순히 다킷의 메서드를 호출하도록 구현
+- 프록시는 target이 구현하는 인터페이스의 특정 메서드가 아니라 모든 메서드를 구현해야함
+    - 부가 기능이 추가되지 않는 메서드라도 단순히 target의 메서드를 호출하도록 구현
 - 프록시는 메서드 수준에서 관리 포인트를 확보
     - 동일한 부가 기능이 여러 메서드에 추가되어야 한다면 중복 코드 발생 우려 
 
@@ -61,7 +62,7 @@
 UserService userTx = (UserService)Proxy.newProxyInstance(
     getClass().getClassLoader(), // 클래스로더
     new Class[] {UserService.class}, // 구현할 인터페이스
-    new UserServiceTx(new UserServiceImpl()) // 타깃과 부가 기능 프록시 
+    new UserServiceTx(new UserServiceImpl()) // target(UserServiceImpl)과 부가 기능 프록시(UserServiceTx) 
 );
 ```
 
@@ -71,8 +72,8 @@ UserService userTx = (UserService)Proxy.newProxyInstance(
     - FactoryBean 인터페이스를 구현한 클래스에서 getObject()의 구현부에서 Proxy.newProxyInstance()로 dynamic proxy를 만들면 빈으로 등록 가능
 - 프록시를 이용해서 부가기능을 추가하는 것은 메서드 단위로 일어나는 일
     - 공통적인 부가 기능을 한 번에 여러 클래스에 추가 불가
-- 프록시는 타깃을 프로퍼티로 가지고 있으므로
-    - 트랜잭션 설정이라는 동일한 기능을 추가하더라도 타깃이 달라지면 별도의 프록시를 생성해야 한다.
+- 프록시는 target을 프로퍼티로 가지고 있으므로
+    - 트랜잭션 설정이라는 동일한 기능을 추가하더라도 target이 달라지면 별도의 프록시를 생성해야 한다.
     - 새로운 부가기능을 추가할 떄마다 프록시와 프록시 팩토리 빈을 함께 추가해야 한다.
 
 ### 스프링의 Dynamic Proxy
@@ -83,8 +84,8 @@ UserService userTx = (UserService)Proxy.newProxyInstance(
 - 
 
 #### MethodInterceptor
-- InvocationHandler.invoke()는 타깃 객체에 대한 정보를 제공하지 않아서 타깃 객체 마다 프록시를 만들어야 했지만,
-- MethodInterceptor.invoke()는 ProxyFactoryBean으로부터 타깃 객체에 대한 정보도 함께 제공받으므로, 여러 프록시에서 재사용될 수 있다.
+- InvocationHandler.invoke()는 target 객체에 대한 정보를 제공하지 않아서 target 객체 마다 프록시를 만들어야 했지만,
+- MethodInterceptor.invoke()는 ProxyFactoryBean으로부터 target 객체에 대한 정보도 함께 제공받으므로, 여러 프록시에서 재사용될 수 있다.
 
 #### Advice
 
@@ -109,8 +110,8 @@ UserService userTx = (UserService)Proxy.newProxyInstance(
 
 ### 트랜잭션 서비스 데코레이터
 
-- UserServiceTx는 실제 비즈니스 로직을 담고 있는 타깃인 UserServiceImpl의 구현한 인터페이스와 동일한 UserService 인터페이스를 구현
-- UserDaoTest의 요청을 타깃보다 먼저 받아서 트랜잭션 설정이라는 부가 기능을 동적으로 추가  
+- UserServiceTx는 실제 비즈니스 로직을 담고 있는 target인 UserServiceImpl의 구현한 인터페이스와 동일한 UserService 인터페이스를 구현
+- UserDaoTest의 요청을 target보다 먼저 받아서 트랜잭션 설정이라는 부가 기능을 동적으로 추가  
 
 - 
 
