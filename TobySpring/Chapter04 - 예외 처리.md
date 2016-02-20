@@ -10,14 +10,14 @@
 
 <a href='http://www.acornpub.co.kr/book/toby-spring3-1-set' target='_blank'>http://www.acornpub.co.kr/book/toby-spring3-1-set</a>
 
-## Unchecked
+## Unchecked Exception
 
 - 시스템 오류나 에러에 가까운 예외
 - RuntimeException을 상속한 예외
 - 명시적으로 try/catch나 throws를 해줄 필요 없음
 - 항상 복구할 수 있는 에러가 아니면 Unchecked로 하고 바로 통보되게 하는 것이 좋음 
 
-## Checked
+## Checked Exception
 
 - 비즈니스 흐름 상에서 예상할 수 있는 예외, 또는 애플리케이션 로직으로 해결할 수 있는 예외
 - RuntimeException을 상속하지 않은 예외
@@ -30,8 +30,15 @@
 
 - 발생한 예외를 외부로 그냥 던져서 외부에서 처리하도록 함
 - 메서드에 throws 문 선언으로 처리
-- 처리해야할 곳으로 제어를 이전할 수 있게 해주나, 
-- 처리해야할 곳에서도 throws를 쓰는 부작용
+
+    ```java
+    public boolean isFileExists(String path) throws IOException {
+        ...
+    }
+    ```
+- 예외를 처리해야할 곳으로 제어를 이전할 수 있게 해주나, 
+- 예외를 처리해야할 곳에서마저도 throws를 쓰게되는 부작용
+
 
 ### 예외 복구
 
@@ -57,7 +64,7 @@
         throw new UncheckedException(e);
     }
     ```     
-- Checked 예외를 잡아서 Unchecked 예외로 전환해서 던지면 예외 발생 메서드를 호출한 외부 메서드에서는try/catch나 throws가 필요없어진다.
+- Checked 예외를 잡아서 Unchecked 예외로 전환해서 던지면 예외 발생 메서드를 호출한 외부 메서드에서는 try/catch나 throws가 필요없어진다.
 
 ## DataAccessException
 
