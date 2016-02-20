@@ -140,14 +140,14 @@ public class UserDaoTest {
  
 - BeanFactory에 Bean을 Singleton 방식으로 관리하는 능력, 의존관계 검색 기능 등을 추가해서 BeanFactory의 기능을 확장한 것이 `ApplicationContext`
 
-```java
-public class UserDaoTest {
-    public static void main(String[] args) throws ... {
-        ApplicationContext context = new AnnotationConfigApplicationContext(DaoFactory.class);
-        UserDao dao = context.getBean("userDao", UserDao.class);
-
-        ...
+    ```java
+    public class UserDaoTest {
+        public static void main(String[] args) throws ... {
+            ApplicationContext context = new AnnotationConfigApplicationContext(DaoFactory.class);
+            UserDao dao = context.getBean("userDao", UserDao.class);
+    
+            ...
+        }
     }
-}
-```
+    ```
 ![](http://i.imgur.com/bFHCIC9.png)
