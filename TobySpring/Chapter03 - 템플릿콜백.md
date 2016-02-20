@@ -12,7 +12,7 @@
 
 ## DB 관련 자원 반납
 
-- DAO에서 DB Connection을 가져오는 부분을 DataSource를 인터페이스로 분리하고, DataSource 구현체를 DI 받아오도록 개선되었지만, JDBC 리소스의 반납 관련 예외 처리 코드가 여전히 DAO에 남아있다.
+- DAO에서 DB Connection을 가져오는 부분을 DataSource 인터페이스로 분리하고, DataSource 인터페이스의 구현체를 DI 받아오도록 개선되었지만, JDBC 리소스의 반납 관련 예외 처리 코드가 여전히 DAO에 남아있다.
 
     ```java
     public class UserDao {
@@ -27,7 +27,7 @@
             dataSource.getConnection();
         }
     
-        public deleteAll() throws SQLException {
+        public void deleteAll() throws SQLException {
             Connection c = null;
             PreparedStatement ps = null;
     
@@ -43,19 +43,20 @@
             }
         }
     
-        public getAll() throws SQLException {
+        public void add(final User user) throws SQLException {
             Connection c = null;
             PreparedStatement ps = null;
-            ResultSet rs = null;
     
             try {
                 c = getConnection();
-                ps = c.prepareStatement("select from users");
-                rs = ps.executeQuery();
+                ps = c.prepareStatement("inser into users(id, name, password) values (?, ?, ?)");
+                ps.setString(1, user.getId());
+                ps.setString(2, user.getName());
+                ps.setString(3, user.getPassword());
+                ps.executeQuery();
             } catch(SQLException e) {
                 throw e;
             } finally {
-                if (rs != null) { try { rs.close(); } catch(SQLException e) {} }
                 if (ps != null) { try { ps.close(); } catch(SQLException e) {} }
                 if (c != null) { try { c.close(); } catch(SQLException e) {} }
             }
@@ -91,23 +92,21 @@
             dataSource.getConnection();
         }
     
-        public deleteAll() throws SQLException {
+        public void deleteAll() throws SQLException {
             // 비즈 로직을 담고 있는 전략을 생성해서 컨텍스트에 주입해주고
             // 로직의 실행 및 뒤처리는 jdbcContextWithStatementStrategy에 위임
             // 자원 반납 등의 지저분한 코드를 jdbcContextWithStatementStrategy로 모아서 중복 제거
-            StatementStrategy strategy = new DeleteAllStatement();
-            jdbcContextWithStatementStrategy(strategy);
+            jdbcContextWithStatementStrategy(new DeleteAllStatement());
         }
     
-        public getAll() throws SQLException {
+        public void add(final User user) throws SQLException {
             // 비즈 로직을 담고 있는 전략을 생성해서 컨텍스트에 주입해주고
             // 로직의 실행 및 뒤처리는 jdbcContextWithStatementStrategy에 위임
             // 자원 반납 등의 지저분한 코드를 jdbcContextWithStatementStrategy로 모아서 중복 제거
-            StatementStrategy strategy = new SelectAllStatement();
-            jdbcContextWithStatementStrategy(strategy);   
+            jdbcContextWithStatementStrategy(new AddStatement());   
         }
     
-        public void jdbcContextWithStatementStrategy(StatementStrategy strategy) throws SQLException {
+        private void jdbcContextWithStatementStrategy(StatementStrategy strategy) throws SQLException {
             // 비즈 로직 외에 변하지 않는 컨텍스트를 모아두고 재사용
             Connection c = null;
             PreparedStatement ps = null;
@@ -137,10 +136,16 @@
         }
     }
     
-    public class SelectAllStatement implements StatementStrategy {
+    public class AddStatement implements StatementStrategy {
         // 실제 비즈 로직을 담는다.
         public PreparedStatement makeStatement(Connection c) throws SQLException {
-            return c.prepareStatement("select * from users");
+            PreparedStatement ps = 
+                        c.prepareStatement("inser into users(id, name, password) values (?, ?, ?)");
+            // 내부 클래스를 쓰면 outer의 변수인 user에 접근 가능
+            ps.setString(1, user.getId());
+            ps.setString(2, user.getName());
+            ps.setString(3, user.getPassword());
+            return ps;
         }
     }
     ```
@@ -148,32 +153,43 @@
 - 조금 더 최적화해서 전략을 익명 클래스로 바꿔보자
 
     ```java
-    public void deleteAll() throws SQLException {
-        jdbcContextWithStatementStrategy(
-            new StatementStrategy(
-                public PreparedStatement makeStatement(Connection c)
-                throws SQLException {
-                    return c.prepareStatement("delete from users");
+    public class UserDao {
+        ...
+    
+        public void deleteAll() throws SQLException {
+            jdbcContextWithStatementStrategy(
+                new StatementStrategy(
+                    public PreparedStatement makeStatement(Connection c) throws SQLException {
+                        return c.prepareStatement("delete from users");
+                    }
                 }
             }
+        }
+        
+        public void add(final User user) throws SQLException {
+            jdbcContextWithStatementStrategy(
+                new StatementStrategy(
+                    public PreparedStatement makeStatement(Connection c) throws SQLException {
+                        PreparedStatement ps = 
+                            c.prepareStatement("inser into users(id, name, password) values (?, ?, ?)");
+                        // 내부 클래스를 쓰면 outer의 변수인 user에 접근 가능
+                        ps.setString(1, user.getId());
+                        ps.setString(2, user.getName());
+                        ps.setString(3, user.getPassword());
+                        return ps;
+                    }
+                }
+            }
+        }
+    
+        private void jdbcContextWithStatementStrategy(StatementStrategy strategy) throws SQLException {
+            // 앞과 동일
+            ... 
         }
     }
-    
-    public void add(final User user) throws SQLException {
-        jdbcContextWithStatementStrategy(
-            new StatementStrategy(
-                public PreparedStatement makeStatement(Connection c)
-                throws SQLException {
-                    PreparedStatement ps = 
-                        c.prepareStatement("inser into users(id, name, password) values (?, ?, ?)");
-                    // 내부 클래스를 쓰면 outer의 변수인 user에 접근 가능
-                    ps.setString(1, user.getId());
-                    ps.setString(2, user.getName());
-                    ps.setString(3, user.getPassword());
-                    return ps;
-                }
-            }
-        }
+
+    public interface StatementStrategy {
+        PreparedStatement makeStatement(Connection c) throws SQLException;
     }
     ```
 
