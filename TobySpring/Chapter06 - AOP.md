@@ -6,7 +6,7 @@
 
 책의 절대적인 가격은 높아보이지만 웬만한 책 두어권 보는 것보다 이 한 권의 책을 여러번 보는 것이 비용 대비 효과가 훨씬 좋을 것입니다.
  
-이 책을 읽고 아낄 수 있는 많은 시간, 높아질 몸값을 생각하면 충분히 투자할 가치가 있는 책입니다. 
+이 책을 읽고나서 아낄 수 있는 많은 시간, 높아질 몸값을 생각하면 충분히 투자할 가치가 있는 책입니다. 
 
 <a href='http://www.acornpub.co.kr/book/toby-spring3-1-set' target='_blank'>http://www.acornpub.co.kr/book/toby-spring3-1-set</a>
 
