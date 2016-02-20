@@ -25,8 +25,12 @@
 
 - 등급 변경 판별 로직은 UserService에 두기보다 Level에 두는 것이 좋다.
 
+## 객체 지향 코드의 기본 원리
+
 > 객체지향적인 코드는 다른 오브젝트의 데이터를 가져와서 스스로 작업하는 대신,
+> 
 > 데이터를 갖고 있는 다른 오브젝트에게 작업을 해달라고 요청한다.
+> 
 > - **오브젝트에게 데이터를 요구하지 말고, 작업을 요청하라**
 
 ## 트랜잭션 처리
@@ -50,17 +54,17 @@
 
 ### 글로벌 트랜잭션 처리
 
-- 하나 이상의 DB가 첨여하는 트랜잭션 생성 시 JTA를 사용해야 함
+- 하나 이상의 DB가 참여하는 트랜잭션 처리 시 JTA를 사용해야 함
 - JTA를 사용하는 Tx 처리를 하려면 UserService 코드가 또 바뀌어야 함
 
 ## 트랜잭션 추상화
 
-- UserService에서 JDBC나 JTA, Hibernate 등 기술에 특정한 Tx 관리 코드에 의존하는 대신 PlatformTransactionManager 인터페이스에 의존하도록 변경
-- DataSourceTransactionManager, HibernateTransactionManager 등을 PlatformTransactionManager에 할당해서 사용
+- UserService에서 JDBC나 JTA, Hibernate 등 특정 기술에 종속되는 Tx 관리 코드에 의존하는 대신 PlatformTransactionManager 인터페이스에 의존하도록 변경
+- PlatformTransactionManager 인터페이스를 구현한 DataSourceTransactionManager, HibernateTransactionManager 등을 PlatformTransactionManager에 할당해서 사용
 
 ## DAO 추상화
 
-- Dao도 JDBC, JTA, Hibernate 등에 의존하지 않도록 인터페이스 추출
+- DAO도 JDBC, JTA, Hibernate 등에 의존하지 않도록 인터페이스 추출
 - UserDao 인터페이스에 UserDaoJdbc, UserDaoJta, UserDaoHibernate등을 필요에 따라 할당하여 사용
 
 ![](http://i.imgur.com/VbXMH6v.png)
