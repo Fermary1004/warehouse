@@ -146,6 +146,7 @@ class AsteriskProxy implements InvocationHandler {
 - 프록시를 생성해서 Bean 객체로 등록시켜주는 팩토리 빈
 
 #### MethodInterceptor
+
 - InvocationHandler.invoke()는 target 객체에 대한 정보를 제공하지 않아서 target 객체 마다 프록시를 만들어야 했지만,
 - MethodInterceptor.invoke()는 ProxyFactoryBean으로부터 target 객체에 대한 정보도 함께 제공받으므로, 여러 프록시에서 재사용될 수 있다.
 
@@ -188,17 +189,27 @@ class AsteriskProxy implements InvocationHandler {
 - Mock 오브젝트 생성과 Mock 오브젝트 내의 메서드 실행을 쉽게 Mocking 해주는 라이브러리
     
     ```java
-    // Test 메서드 내에서
+    // Service Test 메서드 내에서
 
-    // Mock 오브젝트 생성
+    // DAO에 대한 Mock 오브젝트 생성
     UserDao mockUserDao = mock(UserDao.class);
-    // Mock 오브젝트의 메서드 호출 Mocking
-    // when(실제 수행 코드).thenReturn(반환되는 Mocking 값) 의 형식으로 사용
-    when(mockUserDao.getAll()).thenReturn(this.users);
+
     // Mock 오브젝트 주입
     userService.setUserDao(mockUserDao);
-    // Mock 오브젝트의 메서드를 실행하면 mockito의 thenReturn에서 반환해준 값이 반환된다.
-    // 실제 DAO의 실행을 통해 받은 값을 mocking
-    List<User> users = mockUserDao.getAll();
+
+    // Mock 오브젝트의 메서드 호출 시 반환값 Stubbing
+    // when(실제 수행 코드).thenReturn(반환되는 Mocking 값) 의 형식으로 사용
+    when(mockUserDao.getAll()).thenReturn(this.users);
+    
+    // 테스트 할 서비스의 메서드를 호출하면
+    // 서비스의 메서드가 내부적으로 DAO의 메서드를 호출하고,
+    // 실제 DAO 메서드가 아니라 When().thenReturn()으로 Stubbing된 값이 반환됨
+    List<User> users = userService.getAll();
+
+    // 실제 호출되었는지 확인 가능
+    verify(mockUserDao).getAll();
+
+    // 값 테스트
+    assertThat( ... );
     
     ```
