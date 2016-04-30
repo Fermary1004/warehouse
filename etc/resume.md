@@ -2,7 +2,7 @@
 
 - 이름 : 오명운/Oh, Myung Woon
 - 이메일 : hanmomhanda@gmail.com
-- 연락처 : 010-8298-269
+- 연락처 : 010-8298-2369
 - GitHub : https://github.com/hanmomhanda
 - Blog : http://homoefficio.github.io/
 - 번역 문서 모음 : http://hanmomhanda.github.io/Docs/
