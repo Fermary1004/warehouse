@@ -7,6 +7,13 @@
 - Blog : http://homoefficio.github.io/
 - 번역 문서 모음 : http://hanmomhanda.github.io/Docs/
 
+## 지원 이유
+
+- 프로그래밍 전반에 대한 이해와 관점을 한 단계 올려준 스승님과도 같은 책의 저자와의 협업
+- 유능한 동료들과 초기부터 협업하여 서비스를 만들어나가는 과정 참여
+- 영어 및 외국인과의 협업에 대한 비교 우위(KATUSA로 군복무)
+- 막연하나마 계속 품어왔던 해외 진출의 꿈에 다가가기
+
 ## 프로젝트
 
 ### 연세대학교 대학원 입학신청 시스템 구축
@@ -100,75 +107,23 @@
 - 사원
 - LG Philips LCD, 대한화재 등 SI 프로젝트 응용 아키텍쳐 수립 및 공통 부문 개발
 
-
 ## 강점
 
- 
-
-
-
-
-
-
-
-
-2014.12.20
-2016.02.27
-연세대학교 대학원 입학신청 시스템 구축
-에이펙스소프트
-연세대학교 대학원
-응용 아키텍쳐 설계, 프론트 및 백엔드, 보고서, PDF처리, 결제연동 개발
-Bootstrap, BIRT, PDFBox, Tomcat, Spring@MVC, MyBatis, MySQL, Redis, AWS, Git, Maven, Selenium, Jenkins
-
-2013.05.01
-2015.12.18
-SW자산뱅크 개발도우미 컨텐츠 작성
-에이펙스소프트
-NIPA
-제안서 작성, 개발도구 활용 PPT, 동영상 작성
-Papyrus, CodeBlock, SharpDevelop, Eclipse, IntelliJ, NetBeans, QtCreator, Eclipse BIRT, Jasper Studio, JUnit, Selenium, JMeter, Gradle, Maven, Jenkins, Git, EGit, Bugzilla, Trac
-
-2013.01.07
-2015.09.30
-Eclipse 기반 UML 모델링 도구 개발
-에이펙스소프트
-자체 솔루션
-시퀀스 다이어그램, 모델 탐색기 개발
-Eclipse Plug-in, GEF, GMF, EMF, Eclipse, Git, Gitlab
-
-2014.05.01
-2014.12.31
-글로벌오픈프론티어지원사업 bsNet 개발
-ProjectBS 커뮤니티
-NIPA
-사업 제안, CORS 라이브러리 개발
-JavaScript, AJAX, PHP, CORS, Git
-
-2013.07.22
-2013.12.20
-오픈소스 APM 구축
-에이펙스소프트
-NIPA
-성능데이터 수집, 대쉬보드 개발
-JavaScript, D3.js, SpringAOP, Git, Github, Jenkins
-
-2013.04.22
-2013.07.19
-인천공항 항공운항정보시스템 구축
-에이펙스소프트
-인천공항공사
-응용 아키텍트
-Vert.x, WebSocket, TCP Socket, Server Sent
-
-2013.03.05
-2013.04.24
-공개SW 라이선스 컨설팅
-에이펙스소프트
-NIPA
-공개SW 라이선스 컨설턴트
-안랩 제품에 대한 공개SW 라이선스 준수 확인 절차 수립, 공개SW 라이선스 검증 결과 피드백
-
-
-
-
+- KATUSA로 군복무(동두천 미2사단)하여 기본적인 영어 회화 가능 및 외국인(미군)과의 협업 경험
+- 영어 문서 이해에 큰 어려움 없으며, 3권의 기술 서적 번역/출간 경험
+    - http://hanmomhanda.github.io/Docs/
+- 블록체인과 비트코인에 대한 관심 및 기초 지식
+    - http://goo.gl/jFPtnA
+- 토비의 스프링 책으로 OOP 및 Spring 기본 지식 습득
+    - https://goo.gl/EFnbbP
+- 객체 지향에 대한 이해도를 높이기 위해 미숙하나마 나름의 원고 작성 중
+    - https://goo.gl/Otn2f4
+- 언어를 익히는 나름의 학습 방식
+    - 알고 싶은 언어로 디자인 패턴을 구현해본다.
+    - https://goo.gl/bR6sZg
+- 중간에 SW개발을 업으로 하지 않은 경력 공백이 있지만, 일반적인 개발자들에 비해 아래와 같은 강점 보유 
+    - 갑과 을을 모두 경험
+    - 다양한 사람과의 의사소통
+    - 다양한 업무 적응 능력    
+    - 제안/보고/기술문서 등 다양한 문서 작성 능력 
 
