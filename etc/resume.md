@@ -25,7 +25,8 @@
     - 종이 문서 방문 제출 없는 100% 온라인 지원 프로세스 구축
 * 주요 사용 기술
     - AWS(Route53, ACM, ELB, EC2, RDS, S3, CloudFront, SES)
-    - Spring(MVC, Security, AOP), MyBatis, MySQL, EHCache, Redis, BIRT, PDFBox
+    - Spring(MVC, Security, AOP), MyBatis, MySQL, EHCache, Redis
+    - BIRT, PDFBox, 전자 결제 연동(LG U+)
     - IntelliJ, Maven, Mockito, Selenium, Selenide, Git, Jenkins, Linux
 
 ### SW자산뱅크 개발도우미 컨텐츠 작성
