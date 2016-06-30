@@ -40,7 +40,7 @@ class UserDao {
 ## 템플릿 메서드 패턴
 
 ```java
-public class UserDao {
+public abstract class UserDao {
     // DB연결 부분은 subclass에서 결정 
     protected abstract Connection getConnection() throws ... ;
 
